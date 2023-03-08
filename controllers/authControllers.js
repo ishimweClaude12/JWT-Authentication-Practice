@@ -33,12 +33,12 @@ module.exports.login_get = (req, res)=>{
 }
 module.exports.signup_post =async (req, res)=>{
     // const { email , password} = req.body;
-    const {email, password} = req.body.email;
+    const {email, password} = req.body;
     try{
         const user = await User.create({ email, password});
         const token = createToken(user._id);
         res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge *1000});
-        res.status(201).json({user: user._id});
+        res.status(201);
     }
     catch (err){ 
         handleErrors(err);
@@ -51,9 +51,18 @@ try {
     const user= await User.login(email, password)
     const token = createToken(user._id);
     res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge *1000});
-    res.status(201).json({user: user._id});
+    res.status(201);
+    res.redirect('/smoothies')
+
       
 } catch (error) {
-    res.status(400).json({error})
+    res.status(400);
+    console.log(error);
 };
 }
+module.exports.logout_get= 
+    (req, res)=>{
+        // const token = createToken();
+        res.cookie('jwt', '', {httpOnly: true, maxAge: 10 });
+        res.redirect('/')
+    };
